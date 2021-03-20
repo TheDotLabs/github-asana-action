@@ -12,15 +12,7 @@ This action integrates asana with github.
 
 ### `asana-pat`
 
-**Required** Your public access token of asana, you can find it in [asana docs](https://developers.asana.com/docs/#authentication-basics).
-
-### `trigger-phrase`
-
-**Required** Prefix before the task i.e ASANA TASK: https://app.asana.com/1/2/3/. For special characters in the trigger phrase refer to the examples.
-
-### `task-comment`
-
-**Optional** If any comment is provided, the action will add a comment to the specified asana task with the text & pull request link.
+**Required** Your personal access token of asana, you can find it in [asana docs](https://developers.asana.com/docs/#authentication-basics).
 
 ### `targets`
 
@@ -43,18 +35,5 @@ if you don't want to move task omit `targets`.
 uses: insurify/github-asana-action@v1.0.1
 with:
   asana-pat: 'Your PAT'
-  task-comment: 'View Pull Request Here: '
-  trigger-phrase: 'Asana Task:'
-  targets: '[{"project": "Backlog", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
-```
-
-#### With special characters:
-
-```yaml
-uses: insurify/github-asana-action@v1.0.1
-with:
-  asana-pat: 'Your PAT'
-  task-comment: 'View Pull Request Here: '
-  trigger-phrase: "\\*\\*Asana Task:\\*\\*"
   targets: '[{"project": "Backlog", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
 ```
