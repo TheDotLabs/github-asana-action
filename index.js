@@ -2,7 +2,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const asana = require("asana");
 
-async function asanaOperations(asanaPAT, targets, taskId, prUrl, prIsMerged) {
+async function asanaOperations(asanaPAT, targets, taskId, prUrl, prIsMerged,PULL_REQUEST) {
   try {
     const client = asana.Client.create({
       defaultHeaders: { "asana-enable": "new-sections,string_ids" },
@@ -34,12 +34,12 @@ async function asanaOperations(asanaPAT, targets, taskId, prUrl, prIsMerged) {
 
     if (prIsMerged) {
       await client.tasks.addComment(taskId, {
-        text: `PR Merged: ${prUrl}`,
+        text: `PR Merged: ${prUrl}\nMerged by: ${PULL_REQUEST.merged_by.html_url}`,
       });
       core.info(`Added the PR closed status to the Asana task: ${taskId}`);
     } else {
       await client.tasks.addComment(taskId, {
-        text: `PR Raised: ${prUrl}`,
+        text: `PR Raised: ${prUrl}\Raised by: ${PULL_REQUEST.user.html_url}`,
       });
       core.info(`Added the PR link to the Asana task: ${taskId}`);
     }
@@ -80,7 +80,7 @@ try {
   while ((parseAsanaURL = REGEX.exec(PULL_REQUEST.body)) !== null) {
     let taskId = parseAsanaURL.groups.task;
     if (taskId) {
-      asanaOperations(ASANA_PAT, targets, taskId, prUrl, prIsMerged);
+      asanaOperations(ASANA_PAT, targets, taskId, prUrl, prIsMerged,PULL_REQUEST);
     } else {
       core.info(
         `Invalid Asana task URL after the trigger phrase ${TRIGGER_PHRASE}`
@@ -90,3 +90,5 @@ try {
 } catch (error) {
   core.error(error.message);
 }
+
+
