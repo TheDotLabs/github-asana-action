@@ -50,6 +50,7 @@ async function asanaOperations(asanaPAT, targets, taskId, prUrl, prIsMerged) {
 
 try {
   console.log(github.context);
+  console.log(JSON.stringify(github.context));
   const ASANA_PAT = core.getInput("asana-pat"),
     TARGETS = core.getInput("targets"),
     TRIGGER_PHRASE = core.getInput("trigger-phrase"),
