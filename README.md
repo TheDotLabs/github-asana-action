@@ -22,7 +22,14 @@ targets: '[{"project": "Backlog", "section": "Development Done"}, {"project": "C
 ```
 if you don't want to move task omit `targets`.
 
+## Sample Commit
+
+[Fix] Add xyz to pqr
+
+Asana Task: https://app.asana.com/0/---/---
+
 ## Sample PR Description
+
 ``
 **Asana Task:** [Task Name](https://app.asana.com/0/1/2)
 ``

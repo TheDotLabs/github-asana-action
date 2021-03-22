@@ -25,5 +25,8 @@
     "@actions/core": "^1.2.0",
     "@actions/github": "^1.1.0",
     "asana": "^0.17.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.22.0"
   }
 }
