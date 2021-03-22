@@ -1,4 +1,4 @@
-const handleGitEvent =require( "./index");
+const {handleGitEvent} = require("./index");
 
 try {
     //const githubContext=github.context;
@@ -6,14 +6,16 @@ try {
     console.log(JSON.stringify(githubContext));
     // const ASANA_PAT = core.getInput("asana-pat");
     const ASANA_PAT = "avc";
-    const TARGETS='[]';
+    const TARGETS_COMMITS_PUSH = '[]';
+    const TARGETS_PR_RAISE = '[]';
+    const TARGETS_PR_MERGE = '[]';
 
     const COMMITS = githubContext.payload.commits;
     const EVENT_NAME = githubContext.eventName;
     const PULL_REQUEST = githubContext.payload.pull_request;
 
-    handleGitEvent(ASANA_PAT, TARGETS, PULL_REQUEST, EVENT_NAME, COMMITS);
+    handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_COMMITS_PUSH, TARGETS_PR_RAISE, TARGETS_PR_MERGE);
 } catch (error) {
-   console.log(error.message);
+    console.log(error.message);
 }
 

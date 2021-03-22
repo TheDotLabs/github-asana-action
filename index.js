@@ -4,11 +4,12 @@ const asana = require("asana");
 
 async function handlePRAsana(
     asanaPAT,
-    targets,
     taskId,
     prUrl,
     prIsMerged,
-    PULL_REQUEST
+    PULL_REQUEST,
+    targetsPRRaise,
+    targetsPRMerge
 ) {
     try {
         const client = asana.Client.create({
@@ -17,27 +18,6 @@ async function handlePRAsana(
         }).useAccessToken(asanaPAT);
 
         const task = await client.tasks.findById(taskId);
-
-        // targets.forEach(async (target) => {
-        //   let targetProject = task.projects.find(
-        //     (project) => project.name === target.project
-        //   );
-        //   if (targetProject) {
-        //     let targetSection = await client.sections
-        //       .findByProject(targetProject.gid)
-        //       .then((sections) =>
-        //         sections.find((section) => section.name === target.section)
-        //       );
-        //     if (targetSection) {
-        //       await client.sections.addTask(targetSection.gid, { task: taskId });
-        //       core.info(`Moved to: ${target.project}/${target.section}`);
-        //     } else {
-        //       core.error(`Asana section ${target.section} not found.`);
-        //     }
-        //   } else {
-        //     core.info(`This task does not exist in "${target.project}" project`);
-        //   }
-        // });
 
         if (prIsMerged) {
             await client.tasks.addComment(taskId, {
@@ -50,6 +30,28 @@ async function handlePRAsana(
             });
             core.info(`Added the PR link to the Asana task: ${taskId}`);
         }
+
+        const targets = prIsMerged ? targetsPRMerge : targetsPRRaise;
+        targets.forEach(async (target) => {
+            let targetProject = task.projects.find(
+                (project) => project.name === target.project
+            );
+            if (targetProject) {
+                let targetSection = await client.sections
+                    .findByProject(targetProject.gid)
+                    .then((sections) =>
+                        sections.find((section) => section.name === target.section)
+                    );
+                if (targetSection) {
+                    await client.sections.addTask(targetSection.gid, {task: taskId});
+                    core.info(`Moved to: ${target.project}/${target.section}`);
+                } else {
+                    core.error(`Asana section ${target.section} not found.`);
+                }
+            } else {
+                core.info(`This task does not exist in "${target.project}" project`);
+            }
+        });
     } catch (ex) {
         console.error(ex.value);
     }
@@ -95,7 +97,7 @@ async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, commi
     }
 }
 
-function handleGitEvent(ASANA_PAT, TARGETS, PULL_REQUEST, EVENT_NAME, COMMITS) {
+function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_COMMITS_PUSH, TARGETS_PR_RAISE, TARGETS_PR_MERGE) {
     const REGEX = new RegExp(
         `Asana Task: *\\[(.*?)\\]\\(https:\\/\\/app.asana.com\\/(\\d+)\\/(?<project>\\d+)\\/(?<task>\\d+).*?\\)`,
         "g"
@@ -112,10 +114,12 @@ function handleGitEvent(ASANA_PAT, TARGETS, PULL_REQUEST, EVENT_NAME, COMMITS) {
         };
     }
 
-    let targets = TARGETS ? JSON.parse(TARGETS) : [];
 
     if (PULL_REQUEST != null) {
         core.info('Handling PR event...')
+        let targetsPRRaise = TARGETS_PR_RAISE ? JSON.parse(TARGETS_PR_RAISE) : [];
+        let targetsPRMerge = TARGETS_PR_MERGE ? JSON.parse(TARGETS_PR_MERGE) : [];
+
         const prUrl = `${PULL_REQUEST.html_url}`;
         const prIsMerged = PULL_REQUEST.merged;
 
@@ -126,11 +130,12 @@ function handleGitEvent(ASANA_PAT, TARGETS, PULL_REQUEST, EVENT_NAME, COMMITS) {
             if (taskId) {
                 handlePRAsana(
                     ASANA_PAT,
-                    targets,
                     taskId,
                     prUrl,
                     prIsMerged,
-                    PULL_REQUEST
+                    PULL_REQUEST,
+                    targetsPRRaise,
+                    targetsPRMerge
                 );
             } else {
                 core.info(
@@ -140,6 +145,7 @@ function handleGitEvent(ASANA_PAT, TARGETS, PULL_REQUEST, EVENT_NAME, COMMITS) {
         }
     } else if (EVENT_NAME === 'push') {
         core.info('Handling Commits Push event...')
+        let targets = TARGETS_COMMITS_PUSH ? JSON.parse(TARGETS_COMMITS_PUSH) : [];
 
         let commit;
         for (commit of COMMITS) {
@@ -174,13 +180,15 @@ try {
     const githubContext = github.context;
     console.log(JSON.stringify(githubContext));
     const ASANA_PAT = core.getInput("asana-pat");
-    const TARGETS = core.getInput("targets");
+    const TARGETS_COMMIT_PUSH = core.getInput("targets_commit_push");
+    const TARGETS_PR_RAISE = core.getInput("targets_pr_raise");
+    const TARGETS_PR_MERGE = core.getInput("targets_pr_merge");
 
     const COMMITS = githubContext.payload.commits;
     const EVENT_NAME = githubContext.eventName;
     const PULL_REQUEST = githubContext.payload.pull_request;
 
-    handleGitEvent(ASANA_PAT, TARGETS, PULL_REQUEST, EVENT_NAME, COMMITS);
+    handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_COMMIT_PUSH, TARGETS_PR_RAISE, TARGETS_PR_MERGE);
 } catch (error) {
     core.error(error.message);
 }
