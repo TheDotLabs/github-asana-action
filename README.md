@@ -42,5 +42,5 @@ Asana Task: https://app.asana.com/0/---/---
 uses: insurify/github-asana-action@v1.0.1
 with:
   asana-pat: 'Your PAT'
-  targets: '[{"project": "Backlog", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
+  targets: '[{"project": "New MT Flutter App", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
 ```

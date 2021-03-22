@@ -65,24 +65,24 @@ async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, commi
         const task = await client.tasks.findById(taskId);
 
         await targets.forEach(async (target) => {
-          let targetProject = task.projects.find(
-            (project) => project.name === target.project
-          );
-          if (targetProject) {
-            let targetSection = await client.sections
-              .findByProject(targetProject.gid)
-              .then((sections) =>
-                sections.find((section) => section.name === target.section)
-              );
-            if (targetSection) {
-              await client.sections.addTask(targetSection.gid, { task: taskId });
-              core.info(`Moved to: ${target.project}/${target.section}`);
+            let targetProject = task.projects.find(
+                (project) => project.name === target.project
+            );
+            if (targetProject) {
+                let targetSection = await client.sections
+                    .findByProject(targetProject.gid)
+                    .then((sections) =>
+                        sections.find((section) => section.name === target.section)
+                    );
+                if (targetSection) {
+                    await client.sections.addTask(targetSection.gid, {task: taskId});
+                    core.info(`Moved to: ${target.project}/${target.section}`);
+                } else {
+                    core.error(`Asana section ${target.section} not found.`);
+                }
             } else {
-              core.error(`Asana section ${target.section} not found.`);
+                core.info(`This task does not exist in "${target.project}" project`);
             }
-          } else {
-            core.info(`This task does not exist in "${target.project}" project`);
-          }
         });
 
 
@@ -95,18 +95,13 @@ async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, commi
     }
 }
 
-try {
-    console.log(github.context);
-    console.log(JSON.stringify(github.context));
-    const ASANA_PAT = core.getInput("asana-pat");
-    const TARGETS = core.getInput("targets");
-    const PULL_REQUEST = github.context.payload.pull_request;
+function handleGitEvent(ASANA_PAT, TARGETS, PULL_REQUEST, EVENT_NAME, COMMITS) {
     const REGEX = new RegExp(
         `Asana Task: *\\[(.*?)\\]\\(https:\\/\\/app.asana.com\\/(\\d+)\\/(?<project>\\d+)\\/(?<task>\\d+).*?\\)`,
         "g"
     );
     const COMMIT_REGEX = new RegExp(
-        `Asana Task: \\(https:\\/\\/app.asana.com\\/(\\d+)\\/(?<project>\\d+)\\/(?<task>\\d+).*?\\)`,
+        `Asana Task: https:\\/\\/app.asana.com\\/(\\d+)\\/(?<project>\\d+)\\/(?<task>\\d+).*?`,
         "g"
     );
 
@@ -120,6 +115,7 @@ try {
     let targets = TARGETS ? JSON.parse(TARGETS) : [];
 
     if (PULL_REQUEST != null) {
+        core.info('Handling PR event...')
         const prUrl = `${PULL_REQUEST.html_url}`;
         const prIsMerged = PULL_REQUEST.merged;
 
@@ -142,13 +138,14 @@ try {
                 );
             }
         }
-    } else if (github.context.eventName === 'push') {
-        const commits = github.context.payload.commits;
+    } else if (EVENT_NAME === 'push') {
+        core.info('Handling Commits Push event...')
+
         let commit;
-        for (commit in commits) {
+        for (commit of COMMITS) {
             const message = commit.message;
             const commitUrl = commit.url;
-            const committerName = commit.username;
+            const committerName = commit.committer.username;
             let parseAsanaURL = null;
 
             while ((parseAsanaURL = COMMIT_REGEX.exec(message)) !== null) {
@@ -171,6 +168,21 @@ try {
     } else {
         core.info('No event found to work upon');
     }
+}
+
+try {
+    const githubContext = github.context;
+    console.log(JSON.stringify(githubContext));
+    const ASANA_PAT = core.getInput("asana-pat");
+    const TARGETS = core.getInput("targets");
+
+    const COMMITS = githubContext.payload.commits;
+    const EVENT_NAME = githubContext.eventName;
+    const PULL_REQUEST = githubContext.payload.pull_request;
+
+    handleGitEvent(ASANA_PAT, TARGETS, PULL_REQUEST, EVENT_NAME, COMMITS);
 } catch (error) {
     core.error(error.message);
 }
+
+module.exports.handleGitEvent = handleGitEvent;
