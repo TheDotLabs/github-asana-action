@@ -4,6 +4,8 @@
 
 This action integrates asana with github for task movement and auto comment.
 
+<img src="https://user-images.githubusercontent.com/13887407/112085815-2e77af80-8bb1-11eb-9100-973cd024f9d5.png"  height = "100" alt="Asana">
+
 ### Prerequisites
 
 - Asana account with the permission on the particular project you want to integrate with, as this action needs your personal access token.
