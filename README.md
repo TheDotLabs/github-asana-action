@@ -9,7 +9,7 @@ This action integrates asana with github for task movement and auto comment.
 
 ## Inputs
 
-### `asana-pat`
+### `asana-token`
 
 **Required** Your personal access token of asana, you can find it in [asana docs](https://developers.asana.com/docs/#authentication-basics).
 
@@ -42,6 +42,6 @@ Asana Task: https://app.asana.com/0/---/---
 ```yaml
 uses: apgapg/github-asana-action@--latest--
 with:
-  asana-pat: 'Your PAT'
+  asana-token: 'Your PAT'
   targets: '[{"project": "New MT Flutter App", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
 ```
