@@ -1,5 +1,6 @@
 
-# Github Asana Action
+# Github Asana Action 
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/apgapg/github-asana-action) ![GitHub](https://img.shields.io/github/license/apgapg/github-asana-action) ![GitHub Repo stars](https://img.shields.io/github/stars/apgapg/github-asana-action?style=social)
 
 This action integrates asana with github for task movement and auto comment.
 
