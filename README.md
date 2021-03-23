@@ -12,17 +12,24 @@ This action integrates asana with github for task movement and auto comment.
 
 ## Inputs
 
-### `asana-token`
+### `asana-token` (Required)
 
 **Required** Your personal access token of asana, you can find it in [asana docs](https://developers.asana.com/docs/#authentication-basics).
 
-### `targets`
+### `targets` (Optional)
 
 **Optional** JSON array of objects having project and section where to move current task. Move task only if it exists in target project. e.g 
 ```yaml
-targets: '[{"project": "Backlog", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
+targets_commit_push: '[{"project": "Backlog", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"'
+
+# OR
+
+targets_pr_raise: '[{"project": "Backlog", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
+
+# OR
+
+targets_pr_merge: '[{"project": "Backlog", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
 ```
-if you don't want to move task omit `targets`.
 
 ## Sample Commit
 
