@@ -1,12 +1,11 @@
 
-# Github-Asana action
+# Github Asana Action
 
-This action integrates asana with github.
+This action integrates asana with github for task movement and auto comment.
 
 ### Prerequisites
 
-- Asana account with the permission on the particular project you want to integrate with.
-- Must provide the task url in the PR description.
+- Asana account with the permission on the particular project you want to integrate with, as this action needs your personal access token.
 
 ## Inputs
 
@@ -36,10 +35,10 @@ Asana Task: https://app.asana.com/0/---/---
 
 ## Examples
 
-#### Without special characters:
+### Without special characters:
 
 ```yaml
-uses: insurify/github-asana-action@v1.0.1
+uses: apgapg/github-asana-action@--latest--
 with:
   asana-pat: 'Your PAT'
   targets: '[{"project": "New MT Flutter App", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
