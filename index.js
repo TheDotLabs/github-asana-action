@@ -179,7 +179,7 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
 try {
     const githubContext = github.context;
     console.log(JSON.stringify(githubContext));
-    const ASANA_PAT = core.getInput("asana-pat");
+    const ASANA_PAT = core.getInput("asana-token");
     const TARGETS_COMMIT_PUSH = core.getInput("targets_commit_push");
     const TARGETS_PR_RAISE = core.getInput("targets_pr_raise");
     const TARGETS_PR_MERGE = core.getInput("targets_pr_merge");

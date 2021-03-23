@@ -1,6 +1,6 @@
 {
   "name": "github-asana",
-  "version": "1.0.0",
+  "version": "3.3.0",
   "description": "Action to integrate git with asana",
   "main": "index.js",
   "scripts": {
@@ -8,19 +8,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/insurify/github-actions.git"
+    "url": "git+https://github.com/apgapg/github-asana-action.git"
   },
   "keywords": [
     "github-actions",
     "asana",
     "git"
   ],
-  "author": "Ali Sajid",
-  "license": "ISC",
+  "author": "Ayush P Gupta",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/insurify/github-actions/issues"
+    "url": "https://github.com/apgapg/github-asana-action/issues"
   },
-  "homepage": "https://github.com/insurify/github-actions#readme",
+  "homepage": "https://github.com/apgapg/github-asana-action#github-asana-action",
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/github": "^1.1.0",
