@@ -42,7 +42,7 @@ Asana Task: https://app.asana.com/0/---/---
 ## Sample PR Description
 
 ```
-**Asana Task:** [Task Name](https://app.asana.com/0/1/2)
+Asana Task: [Task Name](https://app.asana.com/0/1/2)
 ```
 
 ## Examples
@@ -53,5 +53,5 @@ Asana Task: https://app.asana.com/0/---/---
 uses: apgapg/github-asana-action@--latest--
 with:
   asana-token: 'Your PAT'
-  targets: '[{"project": "New MT Flutter App", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
+  targets_commit_push: '[{"project": "New MT Flutter App", "section": "Development Done"}, {"project": "Current Sprint", "section": "In Review"}]'
 ```
