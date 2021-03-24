@@ -1,5 +1,6 @@
 const asana = require("asana");
 const core = require("@actions/core");
+const {getCommitterAsanaTag} = require("./utils");
 
 async function handlePRAsana(
     asanaPAT,
@@ -21,12 +22,12 @@ async function handlePRAsana(
 
     if (prIsMerged) {
         await client.tasks.addComment(taskId, {
-            text: `✅ PR Merged\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Merged by: ${PULL_REQUEST.merged_by.login}`,
+            text: `✅ PR Merged\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Merged by: ${getCommitterAsanaTag(PULL_REQUEST.merged_by.login)}`,
         });
         core.info(`Added the PR closed status to the Asana task: ${taskId}`);
     } else {
         await client.tasks.addComment(taskId, {
-            text: `🆕 PR Raised\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Raised by: ${PULL_REQUEST.user.login}`,
+            text: `🆕 PR Raised\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Raised by: ${getCommitterAsanaTag(PULL_REQUEST.user.login)}`,
         });
         core.info(`Added the PR link to the Asana task: ${taskId}`);
     }
@@ -55,7 +56,7 @@ async function handlePRAsana(
 }
 
 async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, committerName, message) {
-    const comment = `⬆️ Commit Pushed\n-------------------\n${message}\n-------------------\n👀 View Commit: ${commitUrl}\n👉 Committed by: ${committerName}`;
+    const comment = `⬆️ Commit Pushed\n-------------------\n${message}\n-------------------\n👀 View Commit: ${commitUrl}\n👉 Committed by: ${getCommitterAsanaTag(committerName)}`;
     core.info(`Commenting: \n${comment}`);
 
     const client = asana.Client.create({
@@ -89,8 +90,6 @@ async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, commi
             core.info(`This task does not exist in "${target.project}" project`);
         }
     });
-
-
 }
 
 module.exports.handlePRAsana = handlePRAsana;
