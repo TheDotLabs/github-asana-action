@@ -20,12 +20,12 @@ async function handlePRAsana(
 
     if (prIsMerged) {
         await client.tasks.addComment(taskId, {
-            text: `PR Merged: ${prUrl}\nMerged by: ${PULL_REQUEST.merged_by.html_url}`,
+            text: `✅ PR Merged: ${prUrl}\n👉 Merged by: ${PULL_REQUEST.merged_by.html_url}`,
         });
         core.info(`Added the PR closed status to the Asana task: ${taskId}`);
     } else {
         await client.tasks.addComment(taskId, {
-            text: `PR Raised: ${prUrl}\nRaised by: ${PULL_REQUEST.user.html_url}`,
+            text: `🆕 PR Raised: ${prUrl}\n👉 Raised by: ${PULL_REQUEST.user.html_url}`,
         });
         core.info(`Added the PR link to the Asana task: ${taskId}`);
     }
@@ -85,7 +85,7 @@ async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, commi
 
 
     await client.tasks.addComment(taskId, {
-        text: `Commit Pushed: ${commitUrl}\nCommitted by: https://github.com/${committerName}`,
+        text: `⬆️ Commit Pushed: ${commitUrl}\n👉 Committed by: https://github.com/${committerName}`,
     });
 }
 
