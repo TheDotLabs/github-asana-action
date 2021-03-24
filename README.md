@@ -39,11 +39,15 @@ targets_pr_merge: '[{"project": "Backlog", "section": "Development Done"}, {"pro
 Asana Task: https://app.asana.com/0/---/---
 ```
 
+You only need to add task link. Syntax can be of your choice.
+
 ## Sample PR Description
 
 ```
-Asana Task: [Task Name](https://app.asana.com/0/1/2)
+Asana Task: [Task Name](https://app.asana.com/0/---/---)
 ```
+
+You only need to add task link. Syntax can be of your choice.
 
 ## Examples
 
