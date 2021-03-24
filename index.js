@@ -23,6 +23,7 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
 
         const prUrl = `${PULL_REQUEST.html_url}`;
         const prIsMerged = PULL_REQUEST.merged;
+        const prTitle = PULL_REQUEST.title;
 
         let parseAsanaURL;
         while ((parseAsanaURL = ASANA_TASK_LINK_REGEX.exec(PULL_REQUEST.body)) !== null) {
@@ -37,7 +38,8 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
                     prIsMerged,
                     PULL_REQUEST,
                     targetsPRRaise,
-                    targetsPRMerge
+                    targetsPRMerge,
+                    prTitle
                 ).then(() => {
                     core.info(`Asana Task: ${taskId} updated`);
                 }).catch((reason) => {
@@ -68,7 +70,8 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
                         targets,
                         taskId,
                         commitUrl,
-                        committerName
+                        committerName,
+                        message,
                     ).then(() => {
                         core.info(`Asana Task: ${taskId} updated`);
                     }).catch((reason) => {

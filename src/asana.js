@@ -8,7 +8,8 @@ async function handlePRAsana(
     prIsMerged,
     PULL_REQUEST,
     targetsPRRaise,
-    targetsPRMerge
+    targetsPRMerge,
+    prTitle
 ) {
 
     const client = asana.Client.create({
@@ -20,12 +21,12 @@ async function handlePRAsana(
 
     if (prIsMerged) {
         await client.tasks.addComment(taskId, {
-            text: `✅ PR Merged: ${prUrl}\n👉 Merged by: ${PULL_REQUEST.merged_by.html_url}`,
+            text: `✅ PR Merged\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Merged by: ${PULL_REQUEST.merged_by.login}`,
         });
         core.info(`Added the PR closed status to the Asana task: ${taskId}`);
     } else {
         await client.tasks.addComment(taskId, {
-            text: `🆕 PR Raised: ${prUrl}\n👉 Raised by: ${PULL_REQUEST.user.html_url}`,
+            text: `🆕 PR Raised\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Raised by: ${PULL_REQUEST.user.login}`,
         });
         core.info(`Added the PR link to the Asana task: ${taskId}`);
     }
@@ -53,7 +54,9 @@ async function handlePRAsana(
     });
 }
 
-async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, committerName) {
+async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, committerName, message) {
+    const comment = `⬆️ Commit Pushed\n-------------------\n${message}\n\n👀 View Commit: ${commitUrl}\n👉 Committed by: ${committerName}\n-------------------\n`;
+    core.info(`Commenting: \n${comment}`);
 
     const client = asana.Client.create({
         defaultHeaders: {"asana-enable": "new-sections,string_ids"},
@@ -61,6 +64,10 @@ async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, commi
     }).useAccessToken(asanaPAT);
 
     const task = await client.tasks.findById(taskId);
+
+    await client.tasks.addComment(taskId, {
+        text: comment,
+    });
 
     await targets.forEach(async (target) => {
         let targetProject = task.projects.find(
@@ -84,9 +91,6 @@ async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, commi
     });
 
 
-    await client.tasks.addComment(taskId, {
-        text: `⬆️ Commit Pushed: ${commitUrl}\n👉 Committed by: https://github.com/${committerName}`,
-    });
 }
 
 module.exports.handlePRAsana = handlePRAsana;
