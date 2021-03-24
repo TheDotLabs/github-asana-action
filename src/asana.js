@@ -55,7 +55,7 @@ async function handlePRAsana(
 }
 
 async function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, committerName, message) {
-    const comment = `⬆️ Commit Pushed\n-------------------\n${message}\n\n👀 View Commit: ${commitUrl}\n👉 Committed by: ${committerName}\n-------------------\n`;
+    const comment = `⬆️ Commit Pushed\n-------------------\n${message}\n-------------------\n👀 View Commit: ${commitUrl}\n👉 Committed by: ${committerName}`;
     core.info(`Commenting: \n${comment}`);
 
     const client = asana.Client.create({
