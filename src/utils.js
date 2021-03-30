@@ -7,6 +7,8 @@ function getCommitterAsanaTag(name) {
         return 'https://app.asana.com/0/1127520825602495/list';
     } else if (name === 'samvitjain') {
         return 'https://app.asana.com/0/1190264423420113/list';
+    } else if (name === 'Aashishm178') {
+        return 'https://app.asana.com/0/1200109906013623/list';
     } else {
         return name;
     }
