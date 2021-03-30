@@ -3,7 +3,7 @@ const github = require("@actions/github");
 const {handleCommitPushAsana, handlePRAsana} = require("./src/asana");
 
 
-function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_COMMITS_PUSH, TARGETS_PR_RAISE, TARGETS_PR_MERGE) {
+function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_COMMITS_PUSH, TARGETS_PR_RAISE, TARGETS_PR_MERGE, ACTION) {
     if (!ASANA_PAT) {
         throw {
             message:
@@ -39,7 +39,8 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
                     PULL_REQUEST,
                     targetsPRRaise,
                     targetsPRMerge,
-                    prTitle
+                    prTitle,
+                    ACTION
                 ).then(() => {
                     core.info(`Asana Task: ${taskId} updated`);
                 }).catch((reason) => {
@@ -98,8 +99,9 @@ try {
     const COMMITS = githubContext.payload.commits;
     const EVENT_NAME = githubContext.eventName;
     const PULL_REQUEST = githubContext.payload.pull_request;
+    const ACTION = githubContext.payload.action;
 
-    handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_COMMIT_PUSH, TARGETS_PR_RAISE, TARGETS_PR_MERGE);
+    handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_COMMIT_PUSH, TARGETS_PR_RAISE, TARGETS_PR_MERGE, ACTION);
 } catch (error) {
     core.error(error.message);
 }

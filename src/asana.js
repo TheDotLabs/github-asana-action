@@ -10,7 +10,8 @@ async function handlePRAsana(
     PULL_REQUEST,
     targetsPRRaise,
     targetsPRMerge,
-    prTitle
+    prTitle,
+    ACTION
 ) {
 
     const client = asana.Client.create({
@@ -25,11 +26,16 @@ async function handlePRAsana(
             text: `✅ PR Merged\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Merged by: ${getCommitterAsanaTag(PULL_REQUEST.merged_by.login)}`,
         });
         core.info(`Added the PR closed status to the Asana task: ${taskId}`);
+    } else if (ACTION === "synchronize") {
+        await client.tasks.addComment(taskId, {
+            text: `🔄 PR Added more commits\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Updated by: ${getCommitterAsanaTag(PULL_REQUEST.user.login)}`,
+        });
+        core.info(`Added the PR Update status to the Asana task: ${taskId}`);
     } else {
         await client.tasks.addComment(taskId, {
             text: `🆕 PR Raised\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Raised by: ${getCommitterAsanaTag(PULL_REQUEST.user.login)}`,
         });
-        core.info(`Added the PR link to the Asana task: ${taskId}`);
+        core.info(`Added the PR Raised to the Asana task: ${taskId}`);
     }
 
     const targets = prIsMerged ? targetsPRMerge : targetsPRRaise;
