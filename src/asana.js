@@ -28,7 +28,7 @@ async function handlePRAsana(
         core.info(`Added the PR closed status to the Asana task: ${taskId}`);
     } else if (ACTION === "synchronize") {
         await client.tasks.addComment(taskId, {
-            text: `🔄 PR Added more commits\n-------------------\n${prTitle}\n-------------------\nView: ${prUrl}\n👉 Updated by: ${getCommitterAsanaTag(PULL_REQUEST.user.login)}`,
+            text: `🔄 PR Added more commits\n👉 Updated by: ${getCommitterAsanaTag(PULL_REQUEST.user.login)}`,
         });
         core.info(`Added the PR Update status to the Asana task: ${taskId}`);
     } else {
