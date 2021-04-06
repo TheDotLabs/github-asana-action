@@ -1,4 +1,4 @@
-const {handleGitEvent} = require("./index");
+const {handleGitEvent} = require("./src");
 
 try {
   //const githubContext=github.context;
