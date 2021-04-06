@@ -1,6 +1,6 @@
 {
   "name": "github-asana",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Action to integrate git with asana",
   "main": "dist/index.js",
   "scripts": {
