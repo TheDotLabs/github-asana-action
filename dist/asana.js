@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,56 +54,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleCommitPushAsana = exports.handlePRAsana = exports.moveTask = void 0;
 var asana = require("asana");
-var core = require("@actions/core");
+var core = __importStar(require("@actions/core"));
 var getCommitterAsanaTag = require("./utils").getCommitterAsanaTag;
-function handlePRAsana(asanaPAT, taskId, prUrl, prIsMerged, PULL_REQUEST, targetsPRRaise, targetsPRMerge, prTitle, ACTION) {
-    return __awaiter(this, void 0, void 0, function () {
-        var client, task, targets;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    client = asana.Client.create({
-                        defaultHeaders: { "asana-enable": "new-sections,string_ids" },
-                        logAsanaChangeWarnings: false,
-                    }).useAccessToken(asanaPAT);
-                    return [4 /*yield*/, client.tasks.findById(taskId)];
-                case 1:
-                    task = _a.sent();
-                    if (!prIsMerged) return [3 /*break*/, 3];
-                    return [4 /*yield*/, client.tasks.addComment(taskId, {
-                            text: "\u2705 PR Merged\n-------------------\n" + prTitle + "\n-------------------\nView: " + prUrl + "\n\uD83D\uDC49 Merged by: " + getCommitterAsanaTag(PULL_REQUEST.merged_by.login),
-                        })];
-                case 2:
-                    _a.sent();
-                    core.info("Added the PR closed status to the Asana task: " + taskId);
-                    return [3 /*break*/, 7];
-                case 3:
-                    if (!(ACTION === "synchronize")) return [3 /*break*/, 5];
-                    return [4 /*yield*/, client.tasks.addComment(taskId, {
-                            text: "\uD83D\uDD04 PR Added more commits\n\uD83D\uDC49 Updated by: " + getCommitterAsanaTag(PULL_REQUEST.user.login),
-                        })];
-                case 4:
-                    _a.sent();
-                    core.info("Added the PR Update status to the Asana task: " + taskId);
-                    return [3 /*break*/, 7];
-                case 5: return [4 /*yield*/, client.tasks.addComment(taskId, {
-                        text: "\uD83C\uDD95 PR Raised\n-------------------\n" + prTitle + "\n-------------------\nView: " + prUrl + "\n\uD83D\uDC49 Raised by: " + getCommitterAsanaTag(PULL_REQUEST.user.login),
-                    })];
-                case 6:
-                    _a.sent();
-                    core.info("Added the PR Raised to the Asana task: " + taskId);
-                    _a.label = 7;
-                case 7:
-                    targets = prIsMerged ? targetsPRMerge : targetsPRRaise;
-                    return [4 /*yield*/, moveTask(taskId, client, task, targets)];
-                case 8:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
 function moveTask(taskId, client, task, targets) {
     return __awaiter(this, void 0, void 0, function () {
         var _loop_1, _i, targets_1, target;
@@ -139,6 +113,52 @@ function moveTask(taskId, client, task, targets) {
         });
     });
 }
+exports.moveTask = moveTask;
+function handlePRAsana(asanaPAT, taskId, prUrl, prIsMerged, PULL_REQUEST, targetsPRRaise, targetsPRMerge, prTitle, ACTION) {
+    return __awaiter(this, void 0, void 0, function () {
+        var client, task, comment, targets;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    client = asana.Client.create({
+                        defaultHeaders: { "asana-enable": "new-sections,string_ids" },
+                        logAsanaChangeWarnings: false,
+                    }).useAccessToken(asanaPAT);
+                    return [4 /*yield*/, client.tasks.findById(taskId)];
+                case 1:
+                    task = _a.sent();
+                    if (prIsMerged) {
+                        comment = {
+                            text: "\u2705 PR Merged\n-------------------\n" + prTitle + "\n-------------------\nView: " + prUrl + "\n\uD83D\uDC49 Merged by: " + getCommitterAsanaTag(PULL_REQUEST.merged_by.login),
+                        };
+                        core.info("Adding the PR closed status to the Asana task: " + taskId);
+                    }
+                    else if (ACTION === "synchronize") {
+                        comment = {
+                            text: "\uD83D\uDD04 PR Added more commits\n\uD83D\uDC49 Updated by: " + getCommitterAsanaTag(PULL_REQUEST.user.login),
+                        };
+                        core.info("Adding the PR Update status to the Asana task: " + taskId);
+                    }
+                    else {
+                        comment = {
+                            text: "\uD83C\uDD95 PR Raised\n-------------------\n" + prTitle + "\n-------------------\nView: " + prUrl + "\n\uD83D\uDC49 Raised by: " + getCommitterAsanaTag(PULL_REQUEST.user.login),
+                        };
+                        core.info("Adding the PR Raised to the Asana task: " + taskId);
+                    }
+                    core.info("Commenting: \n" + comment);
+                    return [4 /*yield*/, client.tasks.addComment(taskId, comment)];
+                case 2:
+                    _a.sent();
+                    targets = prIsMerged ? targetsPRMerge : targetsPRRaise;
+                    return [4 /*yield*/, moveTask(taskId, client, task, targets)];
+                case 3:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.handlePRAsana = handlePRAsana;
 function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, committerName, message) {
     return __awaiter(this, void 0, void 0, function () {
         var comment, client, task;
@@ -167,5 +187,4 @@ function handleCommitPushAsana(asanaPAT, targets, taskId, commitUrl, committerNa
         });
     });
 }
-module.exports.handlePRAsana = handlePRAsana;
-module.exports.handleCommitPushAsana = handleCommitPushAsana;
+exports.handleCommitPushAsana = handleCommitPushAsana;

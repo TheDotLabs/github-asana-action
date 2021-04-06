@@ -1,0 +1,1 @@
+export declare function handleGitEvent(ASANA_PAT: string, PULL_REQUEST: any, EVENT_NAME: string, COMMITS: any[], TARGETS_COMMITS_PUSH: string, TARGETS_PR_RAISE: string, TARGETS_PR_MERGE: string, ACTION: string): void;
