@@ -74,7 +74,7 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
             var message = rawMessage.split('\n')[0];
             for (var i = 0; i < rawMessage.split('\n').length; i++) {
                 var line = rawMessage.split('\n')[i];
-                if (i !== 0 && line !== "" && !line.includes('app.asana.com') && !line.includes('Signed-off-by:')) {
+                if (i !== 0 && line !== "" && line !== "\r" && !line.includes('app.asana.com') && !line.includes('Signed-off-by:')) {
                     message = message.concat("\n\n" + line);
                 }
             }
