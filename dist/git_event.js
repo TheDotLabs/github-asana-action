@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -34,7 +38,7 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
         core.info('Handling PR event...');
         var targetsPRRaise = TARGETS_PR_RAISE ? JSON.parse(TARGETS_PR_RAISE) : [];
         var targetsPRMerge = TARGETS_PR_MERGE ? JSON.parse(TARGETS_PR_MERGE) : [];
-        var prUrl = "" + PULL_REQUEST.html_url;
+        var prUrl = "".concat(PULL_REQUEST.html_url);
         var prIsMerged = PULL_REQUEST.merged;
         var prTitle = PULL_REQUEST.title;
         var taskIds = [];
@@ -46,10 +50,10 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
             return index === self.indexOf(element);
         });
         var _loop_1 = function (taskId) {
-            core.info("Found task id: " + taskId);
+            core.info("Found task id: ".concat(taskId));
             if (taskId) {
                 handlePRAsana(ASANA_PAT, taskId, prUrl, prIsMerged, PULL_REQUEST, targetsPRRaise, targetsPRMerge, prTitle, ACTION).then(function () {
-                    core.info("Asana Task: " + taskId + " updated");
+                    core.info("Asana Task: ".concat(taskId, " updated"));
                 }).catch(function (reason) {
                     core.error(reason);
                 });
@@ -75,7 +79,7 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
             for (var i = 0; i < rawMessage.split('\n').length; i++) {
                 var line = rawMessage.split('\n')[i];
                 if (i !== 0 && line !== "" && line !== "\r" && !line.includes('app.asana.com') && !line.includes('Signed-off-by:')) {
-                    message = message.concat("\n\n" + line);
+                    message = message.concat("\n\n".concat(line));
                 }
             }
             var commitUrl = commit.url;
@@ -89,10 +93,10 @@ function handleGitEvent(ASANA_PAT, PULL_REQUEST, EVENT_NAME, COMMITS, TARGETS_CO
                 return index === self.indexOf(element);
             });
             var _loop_2 = function (taskId) {
-                core.info("Found task id: " + taskId);
+                core.info("Found task id: ".concat(taskId));
                 if (taskId) {
                     handleCommitPushAsana(ASANA_PAT, targets, taskId, commitUrl, committerName, message).then(function () {
-                        core.info("Asana Task: " + taskId + " updated");
+                        core.info("Asana Task: ".concat(taskId, " updated"));
                     }).catch(function (reason) {
                         core.error(reason);
                     });
